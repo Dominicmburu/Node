@@ -9,7 +9,7 @@ function getSize(itemPath) {
         return fs.readdirSync(itemPath).reduce((totalSize, child) => {
             const childPath = path.join(itemPath, child);
             return totalSize + getSize(childPath); // Recursively get size of child items
-        }, 0);
+        }, 4096); // Default directory size in Linux
     } else {
         return stats.size; // For files, simply return the file size
     }
@@ -45,5 +45,17 @@ function directoryToTree(rootDir, depth) {
 }
 
 // Example usage
-// const tree = directoryToTree('dummy_dir/a_dir', 5); // Specify the directory and depth limit
-// console.log(JSON.stringify(tree, null, 2)); // Print the resulting tree structure in a formatted JSON
+console.log("Test 1")
+const tree = directoryToTree('dummy_dir/a_dir', 5);
+console.log(JSON.stringify(tree, null, 2)); 
+
+
+// Example 2: Test case for "dummy_dir" with depth 5
+console.log("\nTest 2");
+const example2Output = directoryToTree('dummy_dir', 5);
+console.log(JSON.stringify(example2Output, null, 2));
+
+// Example 3: Test case for "dummy_dir" with depth 1
+console.log("\Test 3");
+const example3Output = directoryToTree('dummy_dir', 1);
+console.log(JSON.stringify(example3Output, null, 2));
