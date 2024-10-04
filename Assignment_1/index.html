@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f7f9fb;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        header {
+            background-color: #343a40;
+            color: #ffffff;
+            padding: 20px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .product-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-details {
+            padding: 15px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .product-meta {
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .action-buttons button {
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        .action-buttons button.view {
+            background-color: #007BFF;
+        }
+
+        .action-buttons button.edit {
+            background-color: #FFC107;
+        }
+
+        .action-buttons button.delete {
+            background-color: #DC3545;
+        }
+
+        .action-buttons button:hover {
+            opacity: 0.9;
+        }
+
+        #createProductBtn {
+            padding: 12px 20px;
+            margin: 30px 0;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            width: 100%;
+            max-width: 200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #createProductBtn:hover {
+            background-color: #218838;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            max-height: 70vh;
+            overflow-y: auto;
+            border-radius: 8px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal h2 {
+            margin-top: 0;
+        }
+
+        form input[type="text"],
+        form input[type="number"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        form button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        Product Page
+    </header>
+
+    <div class="container">
+
+        <!-- Create New Product Button -->
+        <button id="createProductBtn" onclick="openModal('createModal')">Create New Product</button>
+
+        <div class="product-grid" id="productGrid">
+            <!-- Product Card -->
+            <!-- <div class="product-card" id="product-10">
+                <img src="https://images.unsplash.com/photo-1465310477141-6fb93167a273?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
+                    alt="Sports and Adventure Expo">
+                <div class="product-details">
+                    <p class="product-title">Sports and Adventure Expo</p>
+                    <p class="product-meta">Price: $20<br>Date: May 20-22, 2022<br>Location: McCormick Place,
+                        Chicago<br>Company: Google</p>
+                    <div class="action-buttons">
+                        <button class="view" onclick="openModal('viewModal')">View</button>
+                        <button class="edit" onclick="openModal('editModal')">Edit</button>
+                        <button class="delete" onclick="openModal('deleteModal')">Delete</button>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+
+
+    </div>
+
+    <!-- Modals -->
+    <!-- View Modal -->
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('viewModal')">&times;</span>
+            <h2>View Product</h2>
+            <p id="viewTitle"></p>
+            <p id="viewPrice"></p>
+            <p id="viewDate"></p>
+            <p id="viewLocation"></p>
+            <p id="viewCompany"></p>
+            <div id="viewImage"></div>
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createModal')">&times;</span>
+            <h2>Create New Product</h2>
+            <form id="createForm">
+                <label for="createTitle">Title:</label><br>
+                <input type="text" id="createTitle"><br>
+
+                <label for="createPrice">Price:</label><br>
+                <input type="number" id="createPrice"><br>
+
+                <label for="createDate">Date:</label><br>
+                <input type="text" id="createDate"><br>
+
+                <label for="createLocation">Location:</label><br>
+                <input type="text" id="createLocation"><br>
+
+                <label for="createCompany">Company:</label><br>
+                <input type="text" id="createCompany"><br>
+
+                <label for="createImageUrl">Image URL:</label><br>
+                <input type="text" id="createImageUrl"><br>
+                <button type="button" onclick="addProduct()">Add Product</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Edit Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('editModal')">&times;</span>
+            <h2>Edit Product</h2>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <label for="editTitle">Title:</label><br>
+                <input type="text" id="editTitle"><br>
+
+                <label for="editPrice">Price:</label><br>
+                <input type="number" id="editPrice"><br>
+
+                <label for="editDate">Date:</label><br>
+                <input type="text" id="editDate"><br>
+
+                <label for="editLocation">Location:</label><br>
+                <input type="text" id="editLocation"><br>
+
+                <label for="editCompany">Company:</label><br>
+                <input type="text" id="editCompany"><br>
+
+                <label for="editImageUrl">Image URL:</label><br>
+                <input type="text" id="editImageUrl"><br>
+                <button type="button" onclick="saveChanges()">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Delete Product</h2>
+            <p>Are you sure you want to delete "Sports and Adventure Expo"?</p>
+            <button type="button" onclick="confirmDelete()">Delete</button>
+        </div>
+    </div>
+
+    <script>
+        const productGrid = document.getElementById('productGrid');
+
+        // Fetch all products
+        async function fetchProducts() {
+            const response = await fetch('http://localhost:3000/products');
+            const products = await response.json();
+            displayProducts(products);
+        }
+
+        // Display products
+        function displayProducts(products) {
+            productGrid.innerHTML = '';
+            products.forEach(product => {
+                const productCard = `
+            <div class="product-card" id="product-${product.id}">
+                <img src="${product.imageUrl}" alt="${product.title}">
+                <div class="product-details">
+                    <p class="product-title">${product.title}</p>
+                    <p class="product-meta">Price: $${product.price}<br>Date: ${product.date}<br>Location: ${product.location}<br>Company: ${product.company}</p>
+                    <div class="action-buttons">
+                        <button class="view" onclick="viewProduct(${product.id})">View</button>
+                        <button class="edit" onclick="editProduct(${product.id})">Edit</button>
+                        <button class="delete" onclick="deleteProduct(${product.id})">Delete</button>
+                    </div>
+                </div>
+            </div>`;
+                productGrid.innerHTML += productCard;
+            });
+        }
+
+        // Add new product
+        async function addProduct() {
+            const title = document.getElementById('createTitle').value;
+            const price = document.getElementById('createPrice').value;
+            const date = document.getElementById('createDate').value;
+            const location = document.getElementById('createLocation').value;
+            const company = document.getElementById('createCompany').value;
+            const imageUrl = document.getElementById('createImageUrl').value;
+
+            const newProduct = { title, price, date, location, company, imageUrl };
+            await fetch('http://localhost:3000/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newProduct)
+            });
+
+            closeModal('createModal');
+            fetchProducts(); // Refresh the product list
+        }
+
+        // Save changes to product
+        async function saveChanges() {
+            const id = document.getElementById('editId').value;
+            const title = document.getElementById('editTitle').value;
+            const price = document.getElementById('editPrice').value;
+            const date = document.getElementById('editDate').value;
+            const location = document.getElementById('editLocation').value;
+            const company = document.getElementById('editCompany').value;
+            const imageUrl = document.getElementById('editImageUrl').value;
+
+            const updatedProduct = { title, price, date, location, company, imageUrl };
+            await fetch(`http://localhost:3000/products/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedProduct)
+            });
+
+            closeModal('editModal');
+            fetchProducts(); // Refresh the product list
+        }
+
+
+        // Edit product
+        async function editProduct(id) {
+            const response = await fetch(`http://localhost:3000/products/${id}`);
+            const product = await response.json();
+            document.getElementById('editId').value = product.id;
+            document.getElementById('editTitle').value = product.title;
+            document.getElementById('editPrice').value = product.price;
+            document.getElementById('editDate').value = product.date;
+            document.getElementById('editLocation').value = product.location;
+            document.getElementById('editCompany').value = product.company;
+            document.getElementById('editImageUrl').value = product.imageUrl;
+            openModal('editModal');
+        }
+
+
+        // View product details
+        async function viewProduct(id) {
+            const response = await fetch(`http://localhost:3000/products/${id}`);
+            const product = await response.json();
+            document.getElementById('viewTitle').textContent = `Title: ${product.title}`;
+            document.getElementById('viewPrice').textContent = `Price: $${product.price}`;
+            document.getElementById('viewDate').textContent = `Date: ${product.date}`;
+            document.getElementById('viewLocation').textContent = `Location: ${product.location}`;
+            document.getElementById('viewCompany').textContent = `Company: ${product.company}`;
+            document.getElementById('viewImage').innerHTML = `<img src="${product.imageUrl}" alt="${product.title}" style="width: 100%; height: auto;">`;
+            openModal('viewModal');
+        }
+
+
+        // Edit product
+        async function editProduct(id) {
+            const response = await fetch(`http://localhost:3000/products/${id}`);
+            const product = await response.json();
+            document.getElementById('editId').value = product.id;
+            document.getElementById('editTitle').value = product.title;
+            document.getElementById('editPrice').value = product.price;
+            document.getElementById('editDate').value = product.date;
+            document.getElementById('editLocation').value = product.location;
+            document.getElementById('editCompany').value = product.company;
+            document.getElementById('editImageUrl').value = product.imageUrl;
+            openModal('editModal');
+        }
+
+        // Delete product
+        async function deleteProduct(id) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                await fetch(`http://localhost:3000/products/${id}`, {
+                    method: 'DELETE'
+                });
+
+                fetchProducts();
+            }
+        }
+
+        // Utility functions
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Fetch products on page load
+        fetchProducts();
+    </script>
+
+</body>
+
+</html>
