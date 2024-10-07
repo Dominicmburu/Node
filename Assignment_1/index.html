@@ -4,28 +4,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Page</title>
+    <title>Product Management Page</title>
     <style>
-        body {
+        body,
+        input,
+        button {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
             background-color: #f7f9fb;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         header {
             background-color: #343a40;
             color: #ffffff;
             padding: 20px;
-            text-align: center;
-            font-size: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .container {
+        .cart-icon {
+            cursor: pointer;
+            font-size: 18px;
+            margin-right: 20px;
+        }
+
+        .filters,
+        .container,
+        .modal {
+            text-align: center;
+            margin: 20px auto;
             max-width: 1200px;
-            margin: 30px auto;
-            padding: 0 15px;
+        }
+
+        .filters input,
+        .modal-content input,
+        button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
         }
 
         .product-grid {
@@ -59,8 +81,8 @@
         .product-title {
             font-size: 18px;
             font-weight: bold;
-            color: #333;
             margin-bottom: 8px;
+            color: #333;
         }
 
         .product-meta {
@@ -76,12 +98,12 @@
 
         .action-buttons button {
             border: none;
-            padding: 8px 20px;
-            border-radius: 4px;
+            padding: 5px 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
-            color: #ffffff;
             font-size: 14px;
+            color: #ffffff;
+            transition: background-color 0.3s;
+            border-radius: 4px;
         }
 
         .action-buttons button.view {
@@ -96,35 +118,21 @@
             background-color: #DC3545;
         }
 
-        .action-buttons button:hover {
-            opacity: 0.9;
+        .action-buttons button.add-to-cart {
+            background-color: #28a745;
         }
 
         #createProductBtn {
-            padding: 12px 20px;
-            margin: 30px 0;
             background-color: #28a745;
-            color: #fff;
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            display: block;
-            width: 100%;
-            max-width: 200px;
-            margin-left: auto;
-            margin-right: auto;
+            width: 200px;
+            color: #fff;
         }
 
-        #createProductBtn:hover {
-            background-color: #218838;
-        }
-
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
-            z-index: 1;
-            padding-top: 100px;
             left: 0;
             top: 0;
             width: 100%;
@@ -134,303 +142,251 @@
 
         .modal-content {
             background-color: #fff;
-            margin: auto;
             padding: 20px;
-            border: 1px solid #888;
             width: 80%;
             max-width: 500px;
-            max-height: 70vh;
-            overflow-y: auto;
             border-radius: 8px;
+            margin: 100px auto;
         }
 
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
-        .modal h2 {
-            margin-top: 0;
-        }
-
-        form input[type="text"],
-        form input[type="number"] {
+        .modal-content input[type="text"],
+        .modal-content input[type="number"] {
             width: calc(100% - 20px);
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
             font-size: 16px;
         }
 
-        form button {
-            background-color: #007BFF;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
+        .close {
+            float: right;
+            font-size: 28px;
+            color: #aaa;
             cursor: pointer;
-        }
-
-        form button:hover {
-            background-color: #0056b3;
         }
     </style>
 </head>
 
 <body>
-
     <header>
-        Product Page
+        <div>Product Management Page</div>
+        <div class="cart-icon" onclick="openCart()">🛒 Cart (<span id="cartCount">0</span>)</div>
     </header>
-
+    <div class="filters">
+        <input type="text" id="filterTitle" placeholder="Filter by Title">
+        <input type="text" id="filterCompany" placeholder="Filter by Company">
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+    <button id="createProductBtn" onclick="openModal('createModal')">Create New Product</button>
     <div class="container">
-
-        <!-- Create New Product Button -->
-        <button id="createProductBtn" onclick="openModal('createModal')">Create New Product</button>
-
-        <div class="product-grid" id="productGrid">
-            <!-- Product Card -->
-            <!-- <div class="product-card" id="product-10">
-                <img src="https://images.unsplash.com/photo-1465310477141-6fb93167a273?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"
-                    alt="Sports and Adventure Expo">
-                <div class="product-details">
-                    <p class="product-title">Sports and Adventure Expo</p>
-                    <p class="product-meta">Price: $20<br>Date: May 20-22, 2022<br>Location: McCormick Place,
-                        Chicago<br>Company: Google</p>
-                    <div class="action-buttons">
-                        <button class="view" onclick="openModal('viewModal')">View</button>
-                        <button class="edit" onclick="openModal('editModal')">Edit</button>
-                        <button class="delete" onclick="openModal('deleteModal')">Delete</button>
-                    </div>
-                </div>
-            </div> -->
-        </div>
-
-
+        <div id="productGrid" class="product-grid"></div>
     </div>
 
-    <!-- Modals -->
-    <!-- View Modal -->
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('cartModal')">&times;</span>
+            <h2>Your Cart</h2>
+            <div id="cartItems"></div>
+        </div>
+    </div>
+
+    <!-- View Product Modal -->
     <div id="viewModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('viewModal')">&times;</span>
             <h2>View Product</h2>
             <p id="viewTitle"></p>
             <p id="viewPrice"></p>
-            <p id="viewDate"></p>
-            <p id="viewLocation"></p>
             <p id="viewCompany"></p>
-            <div id="viewImage"></div>
+            <img id="viewImage" src="" alt="Product Image">
         </div>
     </div>
 
-    <!-- Create Modal -->
+    <!-- Create Product Modal -->
     <div id="createModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('createModal')">&times;</span>
             <h2>Create New Product</h2>
             <form id="createForm">
-                <label for="createTitle">Title:</label><br>
-                <input type="text" id="createTitle"><br>
-
-                <label for="createPrice">Price:</label><br>
-                <input type="number" id="createPrice"><br>
-
-                <label for="createDate">Date:</label><br>
-                <input type="text" id="createDate"><br>
-
-                <label for="createLocation">Location:</label><br>
-                <input type="text" id="createLocation"><br>
-
-                <label for="createCompany">Company:</label><br>
-                <input type="text" id="createCompany"><br>
-
-                <label for="createImageUrl">Image URL:</label><br>
-                <input type="text" id="createImageUrl"><br>
+                <input type="text" id="createTitle" placeholder="Title">
+                <input type="number" id="createPrice" placeholder="Price">
+                <input type="text" id="createCompany" placeholder="Company">
+                <input type="text" id="createImageUrl" placeholder="Image URL">
                 <button type="button" onclick="addProduct()">Add Product</button>
             </form>
         </div>
     </div>
 
-
-    <!-- Edit Modal -->
+    <!-- Edit Product Modal -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('editModal')">&times;</span>
             <h2>Edit Product</h2>
             <form id="editForm">
                 <input type="hidden" id="editId">
-                <label for="editTitle">Title:</label><br>
-                <input type="text" id="editTitle"><br>
-
-                <label for="editPrice">Price:</label><br>
-                <input type="number" id="editPrice"><br>
-
-                <label for="editDate">Date:</label><br>
-                <input type="text" id="editDate"><br>
-
-                <label for="editLocation">Location:</label><br>
-                <input type="text" id="editLocation"><br>
-
-                <label for="editCompany">Company:</label><br>
-                <input type="text" id="editCompany"><br>
-
-                <label for="editImageUrl">Image URL:</label><br>
-                <input type="text" id="editImageUrl"><br>
+                <input type="text" id="editTitle" placeholder="Title">
+                <input type="number" id="editPrice" placeholder="Price">
+                <input type="text" id="editCompany" placeholder="Company">
+                <input type="text" id="editImageUrl" placeholder="Image URL">
                 <button type="button" onclick="saveChanges()">Save Changes</button>
             </form>
         </div>
     </div>
 
-
-    <!-- Delete Modal -->
+    <!-- Delete Product Modal -->
     <div id="deleteModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal('deleteModal')">&times;</span>
             <h2>Delete Product</h2>
-            <p>Are you sure you want to delete "Sports and Adventure Expo"?</p>
+            <p id="deleteConfirmationText"></p>
             <button type="button" onclick="confirmDelete()">Delete</button>
         </div>
     </div>
-
+    <!-- https://chatgpt.com/c/6703cb22-c57c-8000-ad20-b3b9888d7618 -->
     <script>
-        const productGrid = document.getElementById('productGrid');
+        let products = [];
+        let cart = [];
+        let productToDelete = null;
 
-        // Fetch all products
-        async function fetchProducts() {
-            const response = await fetch('http://localhost:3000/products');
-            const products = await response.json();
-            displayProducts(products);
-        }
+        document.addEventListener('DOMContentLoaded', () => loadProducts());
 
-        // Display products
-        function displayProducts(products) {
-            productGrid.innerHTML = '';
-            products.forEach(product => {
-                const productCard = `
-            <div class="product-card" id="product-${product.id}">
-                <img src="${product.imageUrl}" alt="${product.title}">
-                <div class="product-details">
-                    <p class="product-title">${product.title}</p>
-                    <p class="product-meta">Price: $${product.price}<br>Date: ${product.date}<br>Location: ${product.location}<br>Company: ${product.company}</p>
-                    <div class="action-buttons">
-                        <button class="view" onclick="viewProduct(${product.id})">View</button>
-                        <button class="edit" onclick="editProduct(${product.id})">Edit</button>
-                        <button class="delete" onclick="deleteProduct(${product.id})">Delete</button>
-                    </div>
-                </div>
-            </div>`;
-                productGrid.innerHTML += productCard;
-            });
-        }
-
-        // Add new product
-        async function addProduct() {
-            const title = document.getElementById('createTitle').value;
-            const price = document.getElementById('createPrice').value;
-            const date = document.getElementById('createDate').value;
-            const location = document.getElementById('createLocation').value;
-            const company = document.getElementById('createCompany').value;
-            const imageUrl = document.getElementById('createImageUrl').value;
-
-            const newProduct = { title, price, date, location, company, imageUrl };
-            await fetch('http://localhost:3000/products', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newProduct)
-            });
-
-            closeModal('createModal');
-            fetchProducts(); // Refresh the product list
-        }
-
-        // Save changes to product
-        async function saveChanges() {
-            const id = document.getElementById('editId').value;
-            const title = document.getElementById('editTitle').value;
-            const price = document.getElementById('editPrice').value;
-            const date = document.getElementById('editDate').value;
-            const location = document.getElementById('editLocation').value;
-            const company = document.getElementById('editCompany').value;
-            const imageUrl = document.getElementById('editImageUrl').value;
-
-            const updatedProduct = { title, price, date, location, company, imageUrl };
-            await fetch(`http://localhost:3000/products/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedProduct)
-            });
-
-            closeModal('editModal');
-            fetchProducts(); // Refresh the product list
-        }
-
-
-        // Edit product
-        async function editProduct(id) {
-            const response = await fetch(`http://localhost:3000/products/${id}`);
-            const product = await response.json();
-            document.getElementById('editId').value = product.id;
-            document.getElementById('editTitle').value = product.title;
-            document.getElementById('editPrice').value = product.price;
-            document.getElementById('editDate').value = product.date;
-            document.getElementById('editLocation').value = product.location;
-            document.getElementById('editCompany').value = product.company;
-            document.getElementById('editImageUrl').value = product.imageUrl;
-            openModal('editModal');
-        }
-
-
-        // View product details
-        async function viewProduct(id) {
-            const response = await fetch(`http://localhost:3000/products/${id}`);
-            const product = await response.json();
-            document.getElementById('viewTitle').textContent = `Title: ${product.title}`;
-            document.getElementById('viewPrice').textContent = `Price: $${product.price}`;
-            document.getElementById('viewDate').textContent = `Date: ${product.date}`;
-            document.getElementById('viewLocation').textContent = `Location: ${product.location}`;
-            document.getElementById('viewCompany').textContent = `Company: ${product.company}`;
-            document.getElementById('viewImage').innerHTML = `<img src="${product.imageUrl}" alt="${product.title}" style="width: 100%; height: auto;">`;
-            openModal('viewModal');
-        }
-
-
-        // Edit product
-        async function editProduct(id) {
-            const response = await fetch(`http://localhost:3000/products/${id}`);
-            const product = await response.json();
-            document.getElementById('editId').value = product.id;
-            document.getElementById('editTitle').value = product.title;
-            document.getElementById('editPrice').value = product.price;
-            document.getElementById('editDate').value = product.date;
-            document.getElementById('editLocation').value = product.location;
-            document.getElementById('editCompany').value = product.company;
-            document.getElementById('editImageUrl').value = product.imageUrl;
-            openModal('editModal');
-        }
-
-        // Delete product
-        async function deleteProduct(id) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                await fetch(`http://localhost:3000/products/${id}`, {
-                    method: 'DELETE'
-                });
-
-                fetchProducts();
+        async function loadProducts() {
+            try {
+                const response = await fetch('http://localhost:3000/api/products');
+                products = await response.json();
+                displayProducts(products);
+            } catch (error) {
+                console.error('Error loading products:', error);
             }
         }
 
-        // Utility functions
+        function openCart() {
+            const cartItemsDiv = document.getElementById('cartItems');
+            cartItemsDiv.innerHTML = '';
+
+            if (cart.length === 0) {
+                cartItemsDiv.innerHTML = '<p>Your cart is empty</p>';
+            } else {
+                cart.forEach(item => {
+                    const cartItem = `<div>${item.title} - $${item.price}</div>`;
+                    cartItemsDiv.insertAdjacentHTML('beforeend', cartItem);
+                });
+            }
+            openModal('cartModal');
+        }
+
+        function displayProducts(productsList) {
+            const productGrid = document.getElementById('productGrid');
+            productGrid.innerHTML = '';
+
+            productsList.forEach(product => {
+                const productCard = `
+                    <div class="product-card">
+                        <img src="${product.imageUrl}" alt="${product.title}">
+                        <div class="product-details">
+                            <p class="product-title">${product.title}</p>
+                            <p class="product-meta">Price: $${product.price} <br> Company: ${product.company}</p>
+                            <div class="action-buttons">
+                                <button class="view" onclick="viewProduct('${product.id}')">View</button>
+                                <button class="edit" onclick="editProduct('${product.id}')">Edit</button>
+                                <button class="delete" onclick="showDeleteModal('${product.id}')">Delete</button>
+                                <button class="add-to-cart" onclick="addToCart('${product.id}')">Add to Cart</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                productGrid.insertAdjacentHTML('beforeend', productCard);
+            });
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                cart.push(product);
+                document.getElementById('cartCount').innerText = cart.length;
+                alert(`${product.title} added to cart!`);
+            }
+        }
+
+        function viewProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('viewTitle').innerText = product.title;
+                document.getElementById('viewPrice').innerText = `Price: $${product.price}`;
+                document.getElementById('viewCompany').innerText = `Company: ${product.company}`;
+                document.getElementById('viewImage').src = product.imageUrl;
+                openModal('viewModal');
+            }
+        }
+
+        async function addProduct() {
+            const newProduct = {
+                title: document.getElementById('createTitle').value,
+                price: parseFloat(document.getElementById('createPrice').value),
+                company: document.getElementById('createCompany').value,
+                imageUrl: document.getElementById('createImageUrl').value
+            };
+            try {
+                await fetch('http://localhost:3000/api/products', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newProduct)
+                });
+                closeModal('createModal');
+                loadProducts();
+            } catch (error) {
+                console.error('Error adding product:', error);
+            }
+        }
+
+        function editProduct(productId) {
+            const product = products.find(p => p.id === productId);
+            if (product) {
+                document.getElementById('editId').value = product.id;
+                document.getElementById('editTitle').value = product.title;
+                document.getElementById('editPrice').value = product.price;
+                document.getElementById('editCompany').value = product.company;
+                document.getElementById('editImageUrl').value = product.imageUrl;
+                openModal('editModal');
+            }
+        }
+
+        async function saveChanges() {
+            const updatedProduct = {
+                title: document.getElementById('editTitle').value,
+                price: parseFloat(document.getElementById('editPrice').value),
+                company: document.getElementById('editCompany').value,
+                imageUrl: document.getElementById('editImageUrl').value
+            };
+            const productId = document.getElementById('editId').value;
+            try {
+                await fetch(`http://localhost:3000/api/products/${productId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedProduct)
+                });
+                closeModal('editModal');
+                loadProducts();
+            } catch (error) {
+                console.error('Error updating product:', error);
+            }
+        }
+
+        function showDeleteModal(productId) {
+            productToDelete = productId;
+            const product = products.find(p => p.id === productId);
+            document.getElementById('deleteConfirmationText').innerText = `Are you sure you want to delete "${product.title}"?`;
+            openModal('deleteModal');
+        }
+
+        async function confirmDelete() {
+            try {
+                await fetch(`http://localhost:3000/api/products/${productToDelete}`, { method: 'DELETE' });
+                closeModal('deleteModal');
+                loadProducts();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+            }
+        }
+
         function openModal(modalId) {
             document.getElementById(modalId).style.display = 'block';
         }
@@ -439,10 +395,22 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // Fetch products on page load
-        fetchProducts();
-    </script>
+        async function applyFilters() {
+            const titleFilter = document.getElementById('filterTitle').value;
+            const companyFilter = document.getElementById('filterCompany').value;
+            let url = `http://localhost:3000/api/products/filter?`;
+            if (titleFilter) url += `title=${titleFilter}&`;
+            if (companyFilter) url += `company=${companyFilter}`;
 
+            try {
+                const response = await fetch(url);
+                const filteredProducts = await response.json();
+                displayProducts(filteredProducts);
+            } catch (error) {
+                console.error('Error applying filters:', error);
+            }
+        }
+    </script>
 </body>
 
 </html>
