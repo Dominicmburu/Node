@@ -14,3 +14,6 @@
 ## Assignment 2
 ### Directory To Tree
 Using Node.js's file system library to produce an object tree containing information for a directory and all of its subdirectories up to a specified depth.
+
+## Assignment 3
+Creating a simple Node.js logging system using event handling and file operations.
